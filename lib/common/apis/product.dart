@@ -16,9 +16,13 @@ class ProductAPI {
     }
   }
 
-  static Future<List<Product>> searchProducts() async {
+  static Future<List<Product>> searchProducts(String query) async {
     try {
-      var response = await HttpUtil().get('/products');
+      Map<String, dynamic> queryParameters = {
+        'query': query,
+      };
+      var response = await HttpUtil()
+          .get('/products/search', queryParameters: queryParameters);
       List<dynamic> data = response;
       return data.map((json) => Product.fromJson(json)).toList();
     } catch (e) {

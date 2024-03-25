@@ -29,9 +29,10 @@ class DeleteProductButton extends GetView<ProductController> {
                         color: AppColor.fgSecondary, width: 2.0),
                   ),
                 ),
-                const Text(
+                Text(
                   'Pilih Semua',
-                  style: CustomTextStyle.textSmallMedium,
+                  style: CustomTextStyle.textSmallMedium
+                      .copyWith(color: AppColor.fgPrimary),
                 )
               ],
             ),
@@ -43,6 +44,8 @@ class DeleteProductButton extends GetView<ProductController> {
             onTap: () {
               controller.deleteMultipleProduct(controller.state.selectedIds);
               controller.fetchAllProducts();
+              controller.state.isSearching.value = false;
+              controller.state.isEditing.value == false;
               // controller.getPaginatedProducts();
             },
             child: RoundedContainer(
@@ -51,7 +54,7 @@ class DeleteProductButton extends GetView<ProductController> {
               borderColor: AppColor.borderPrimary,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                    vertical: 10.0, horizontal: 16.0),
+                    vertical: 10.0, horizontal: 33.0),
                 child: Text(
                   'Hapus Barang',
                   style: CustomTextStyle.textRegularMedium

@@ -16,13 +16,7 @@ class ProductState {
   RxList<bool> selectedList = <bool>[].obs;
   RxList<int> selectedIds = <int>[].obs;
 
-  // RxList<Product> foundProducts = Rx<List<Product>>([]);
-  RxList<Product> foundProducts = <Product>[].obs;
-  List<Product> initialProducts = <Product>[];
-
-  // Rx<List<Product>> foundProducts = Rx<List<Product>>([]);
-  //
-  // List<Product> initialProducts = <Product>[];
+  RxList<Product> productSearched = <Product>[].obs;
 
   final List<ProductGroup> groups = [
     ProductGroup(

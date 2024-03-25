@@ -68,13 +68,14 @@ class AddProductButton extends GetView<ProductController> {
                     ),
                   ),
                   const SizedBox(height: 8.0),
-                  const Center(
+                  Center(
                     child: Text('Tambah Barang',
-                        style: CustomTextStyle.textExtraLargeSemiBold),
+                        style: CustomTextStyle.textExtraLargeSemiBold
+                            .copyWith(color: AppColor.fgPrimary)),
                   ),
                   const SizedBox(height: 16.0),
                   ProductTextField(
-                    controller: controller.productNameController,
+                    controller: controller.nameController,
                     titleText: "Nama Barang*",
                     hintText: "Masukkan Nama Barang",
                     validationErrorMessage: "Nama Barang Belum diisi",

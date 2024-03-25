@@ -10,11 +10,12 @@ class FloatingButton extends GetView<ProductController> {
   Widget build(BuildContext context) {
     return Obx(
       () => SizedBox(
-        child: (controller.state.isEditing.value == false)
-            ? const AddProductButton()
-            : const DeleteProductButton(),
+        child: (controller.state.isSearching.value)
+            ? null
+            : (controller.state.isEditing.value == false)
+                ? const AddProductButton()
+                : const DeleteProductButton(),
       ),
     );
   }
 }
-

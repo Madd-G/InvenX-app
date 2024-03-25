@@ -44,8 +44,8 @@ class CustomTextField extends StatelessWidget {
         color: AppColor.fgPrimary,
       ),
       controller: controller,
+      cursorColor: Colors.grey,
       onChanged: (newValue) {
-        // Notify the controller's listeners when the value changes
         controller?.text = newValue;
       },
       validator: overrideValidator

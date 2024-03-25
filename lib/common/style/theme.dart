@@ -10,13 +10,14 @@ class AppTheme {
     fontFamily: "Inter",
     brightness: Brightness.light,
     scaffoldBackgroundColor: AppColor.bgPrimary,
-    splashColor: Colors.transparent,
+    // splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
-    primaryColor: AppColor.fgPrimary,
+    primaryColor: AppColor.bgPrimary,
     appBarTheme: const AppBarTheme(
+      surfaceTintColor: AppColor.bgPrimary,
       elevation: 0,
       centerTitle: true,
-      backgroundColor: AppColor.bgPrimary,
+      color: AppColor.bgPrimary,
       iconTheme: IconThemeData(
         color: AppColor.fgPrimary,
       ),
