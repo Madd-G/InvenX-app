@@ -11,6 +11,18 @@ class ProductState {
   RxString? category = 'Pilih Kategori Barang'.obs;
   RxInt? categoryId = 1.obs;
   RxString? group = 'Pilih Kelompok Barang'.obs;
+  RxBool isSearching = false.obs;
+  RxBool isEditing = false.obs;
+  RxList<bool> selectedList = <bool>[].obs;
+  RxList<int> selectedIds = <int>[].obs;
+
+  // RxList<Product> foundProducts = Rx<List<Product>>([]);
+  RxList<Product> foundProducts = <Product>[].obs;
+  List<Product> initialProducts = <Product>[];
+
+  // Rx<List<Product>> foundProducts = Rx<List<Product>>([]);
+  //
+  // List<Product> initialProducts = <Product>[];
 
   final List<ProductGroup> groups = [
     ProductGroup(

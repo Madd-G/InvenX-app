@@ -41,7 +41,7 @@ class DeleteProductButton extends GetView<ProductController> {
           alignment: Alignment.bottomRight,
           child: GestureDetector(
             onTap: () {
-              controller.deleteMultipleProduct(controller.selectedIds);
+              controller.deleteMultipleProduct(controller.state.selectedIds);
               controller.fetchAllProducts();
               // controller.getPaginatedProducts();
             },

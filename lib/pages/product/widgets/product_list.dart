@@ -19,20 +19,26 @@ class ProductList extends GetView<ProductController> {
       if (controller.state.isLoading && controller.state.products.isEmpty) {
         return const Center(child: CircularProgressIndicator());
       }
+      print('length: ${controller.state.foundProducts.length}');
       return Expanded(
         child: ListView.separated(
           controller: controller.scroll,
-          itemCount: controller.state.products.length +
-              (controller.state.hasMoreData ? 1 : 0),
+          itemCount: controller.state.isSearching.value == true
+              ? controller.state.foundProducts.length
+              : controller.state.products.length +
+                  (controller.state.hasMoreData ? 1 : 0),
           itemBuilder: (context, index) {
             return Obx(() {
               if (index < controller.state.products.length) {
                 Product product = controller.state.products[index];
+                // Product productSearched =  controller.state.foundProducts[index];
+                print('product id: ${product.id}');
+                print('productSearched id: ${controller.state.foundProducts}');
                 return ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
-                  leading: (controller.isEditing.value == true)
+                  leading: (controller.state.isEditing.value == true)
                       ? Checkbox(
-                          value: controller.selectedList[index],
+                          value: controller.state.selectedList[index],
                           onChanged: (value) {
                             controller.toggleProductSelection(index);
                           },
@@ -41,15 +47,20 @@ class ProductList extends GetView<ProductController> {
                         )
                       : null,
                   title: Text(
-                    product.productName,
+                    controller.state.isSearching.value
+                        ? controller.state.foundProducts[index].productName
+                        : product.productName,
                     style: CustomTextStyle.textRegularMedium,
                   ),
                   subtitle: Text(
-                    'Stok : ${product.stock}',
+                    'Stok : ${controller.state.isSearching.value ? controller.state.foundProducts[index].stock : product.stock}',
                     style: CustomTextStyle.textSmallRegular,
                   ),
                   trailing: Text(
-                    product.price.toCurrencyFormat(),
+                    controller.state.isSearching.value
+                        ? controller.state.foundProducts[index].price
+                            .toCurrencyFormat()
+                        : product.price.toCurrencyFormat(),
                     style: CustomTextStyle.textRegularMedium,
                   ),
                   onTap: () {
@@ -102,136 +113,138 @@ class ProductList extends GetView<ProductController> {
               top: 16.0,
               right: 16.0,
               bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Center(
-                child: RoundedContainer(
-                  radius: 90,
-                  height: 6.0,
-                  width: 120.0,
-                  containerColor: AppColor.borderPrimary,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Center(
+                  child: RoundedContainer(
+                    radius: 90,
+                    height: 6.0,
+                    width: 120.0,
+                    containerColor: AppColor.borderPrimary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8.0),
-              Image.asset(MediaRes.productImage),
-              const SizedBox(height: 20.0),
-              RoundedContainer(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 16.0),
-                  child: Column(
-                    children: [
-                      DetailProductItem(
-                        title: "Nama Barang",
-                        value: product.productName,
-                      ),
-                      const Divider(
-                          color: AppColor.borderPrimary, thickness: 1.0),
-                      Obx(
-                        () => DetailProductItem(
-                          title: "Kategori",
-                          value: currentCategory.value,
+                const SizedBox(height: 8.0),
+                Image.asset(MediaRes.productImage),
+                const SizedBox(height: 20.0),
+                RoundedContainer(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 16.0),
+                    child: Column(
+                      children: [
+                        DetailProductItem(
+                          title: "Nama Barang",
+                          value: product.productName,
                         ),
-                      ),
-                      const Divider(
-                          color: AppColor.borderPrimary, thickness: 1.0),
-                      DetailProductItem(
-                        title: "Kelompok",
-                        value: product.productGroup,
-                      ),
-                      const Divider(
-                          color: AppColor.borderPrimary, thickness: 1.0),
-                      DetailProductItem(
-                        title: "Stok",
-                        value: product.stock.toString(),
-                      ),
-                    ],
+                        const Divider(
+                            color: AppColor.borderPrimary, thickness: 1.0),
+                        Obx(
+                          () => DetailProductItem(
+                            title: "Kategori",
+                            value: currentCategory.value,
+                          ),
+                        ),
+                        const Divider(
+                            color: AppColor.borderPrimary, thickness: 1.0),
+                        DetailProductItem(
+                          title: "Kelompok",
+                          value: product.productGroup,
+                        ),
+                        const Divider(
+                            color: AppColor.borderPrimary, thickness: 1.0),
+                        DetailProductItem(
+                          title: "Stok",
+                          value: product.stock.toString(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20.0),
-              RoundedContainer(
-                containerColor: AppColor.bgSecondary,
-                radius: 10.0,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Harga',
-                        style: CustomTextStyle.textRegularMedium
-                            .copyWith(color: AppColor.fgPrimary),
-                      ),
-                      Text(
-                        product.price.toCurrencyFormat(),
-                        style: CustomTextStyle.textRegularMedium
-                            .copyWith(color: AppColor.fgPrimary),
-                      ),
-                    ],
+                const SizedBox(height: 20.0),
+                RoundedContainer(
+                  containerColor: AppColor.bgSecondary,
+                  radius: 10.0,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Harga',
+                          style: CustomTextStyle.textRegularMedium
+                              .copyWith(color: AppColor.fgPrimary),
+                        ),
+                        Text(
+                          product.price.toCurrencyFormat(),
+                          style: CustomTextStyle.textRegularMedium
+                              .copyWith(color: AppColor.fgPrimary),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 32.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        controller.deleteProduct(product.id!);
-                        controller.fetchAllProducts();
-                        Get.back();
-                      },
-                      child: RoundedContainer(
-                        radius: 8.0,
-                        borderWidth: 1.5,
-                        borderColor: AppColor.borderPrimary,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
-                          child: Center(
-                            child: Text(
-                              'Hapus Barang',
-                              style: CustomTextStyle.textRegularMedium
-                                  .copyWith(color: AppColor.danger),
+                const SizedBox(height: 32.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          controller.deleteProduct(product.id!);
+                          controller.fetchAllProducts();
+                          Get.back();
+                        },
+                        child: RoundedContainer(
+                          radius: 8.0,
+                          borderWidth: 1.5,
+                          borderColor: AppColor.borderPrimary,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: Center(
+                              child: Text(
+                                'Hapus Barang',
+                                style: CustomTextStyle.textRegularMedium
+                                    .copyWith(color: AppColor.danger),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8.0),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.back();
-                        showUpdateProductForm(context, product);
-                        controller.fetchCategories();
-                      },
-                      child: RoundedContainer(
-                        radius: 8.0,
-                        borderWidth: 1.5,
-                        containerColor: AppColor.primary,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
-                          child: Center(
-                            child: Text(
-                              'Edit Barang',
-                              style: CustomTextStyle.textRegularMedium
-                                  .copyWith(color: AppColor.onPrimary),
+                    const SizedBox(width: 8.0),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.back();
+                          showUpdateProductForm(context, product);
+                          controller.fetchCategories();
+                        },
+                        child: RoundedContainer(
+                          radius: 8.0,
+                          borderWidth: 1.5,
+                          containerColor: AppColor.primary,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: Center(
+                              child: Text(
+                                'Edit Barang',
+                                style: CustomTextStyle.textRegularMedium
+                                    .copyWith(color: AppColor.onPrimary),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16.0),
-            ],
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+              ],
+            ),
           ),
         );
       },

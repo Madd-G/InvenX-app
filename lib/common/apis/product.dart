@@ -16,6 +16,16 @@ class ProductAPI {
     }
   }
 
+  static Future<List<Product>> searchProducts() async {
+    try {
+      var response = await HttpUtil().get('/products');
+      List<dynamic> data = response;
+      return data.map((json) => Product.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to load products: $e');
+    }
+  }
+
   static Future<List<Product>> getPaginatedProducts() async {
     try {
       Map<String, dynamic> queryParameters = {

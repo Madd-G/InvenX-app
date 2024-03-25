@@ -69,10 +69,8 @@ class AddProductButton extends GetView<ProductController> {
                   ),
                   const SizedBox(height: 8.0),
                   const Center(
-                    child: Text(
-                      'Tambah Barang',
-                      style: CustomTextStyle.textExtraLargeSemiBold,
-                    ),
+                    child: Text('Tambah Barang',
+                        style: CustomTextStyle.textExtraLargeSemiBold),
                   ),
                   const SizedBox(height: 16.0),
                   ProductTextField(

@@ -10,18 +10,14 @@ class ProductController extends GetxController with ScrollMixin {
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController stockController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
-  final TextEditingController updateProductNameController =
-      TextEditingController();
+  final TextEditingController updateProductNameController = TextEditingController();
   final TextEditingController updateStockController = TextEditingController();
   final TextEditingController updatePriceController = TextEditingController();
-  RxBool isEditing = false.obs;
-  RxList<bool> selectedList = <bool>[].obs;
-  RxList<int> selectedIds = <int>[].obs;
 
   @override
   void onInit() {
     getPaginatedProducts();
-    // fetchAllProducts();
+    fetchAllProducts();
     super.onInit();
   }
 
@@ -35,6 +31,19 @@ class ProductController extends GetxController with ScrollMixin {
     updatePriceController.clear();
     super.onClose();
   }
+
+  void filterProduct(String productName) {
+    if (productName.isEmpty) {
+      // Jika input pencarian kosong, atur foundProducts ke list kosong
+      state.foundProducts.value = [];
+    } else {
+      // Jika ada input pencarian, filter daftar produk awal berdasarkan nama
+      List<Product> results = state.initialProducts.where((product) =>
+          product.productName.toLowerCase().contains(productName.toLowerCase())).toList();
+      state.foundProducts.value = results;
+    }
+  }
+
 
   @override
   Future<void> onEndScroll() async {
@@ -50,7 +59,8 @@ class ProductController extends GetxController with ScrollMixin {
   Future<void> fetchAllProducts() async {
     var productList = await ProductAPI.getAllProducts();
     state.products.assignAll(productList);
-    selectedIds.clear();
+    state.initialProducts = productList;
+    state.selectedIds.clear();
   }
 
   Future<void> getPaginatedProducts() async {
@@ -101,10 +111,6 @@ class ProductController extends GetxController with ScrollMixin {
     productNameController.clear();
     stockController.clear();
     priceController.clear();
-    // fetchAllProducts();
-    // update();
-    // getPaginatedProducts();
-    // update();
   }
 
   Future<void> updateProduct(int id) async {
@@ -121,49 +127,48 @@ class ProductController extends GetxController with ScrollMixin {
   }
 
   void toggleEditing() {
-    isEditing.value = !isEditing.value;
-    if (!isEditing.value) {
+    state.isEditing.value = !state.isEditing.value;
+    if (!state.isEditing.value) {
       // Clear all selections when editing is toggled off
-      selectedList
+      state.selectedList
           .assignAll(List.generate(state.products.length, (_) => false));
-      selectedIds.clear();
+      state.selectedIds.clear();
     } else {
       // Initialize selectedList when editing is toggled on
-      selectedList
+      state.selectedList
           .assignAll(List.generate(state.products.length, (_) => false));
-      selectedIds.clear();
+      state.selectedIds.clear();
     }
   }
 
   bool isAllSelected() {
-    return selectedList.every((element) => element);
+    return state.selectedList.every((element) => element);
   }
 
   void toggleSelectAll() {
-    bool allSelected = selectedList.every((element) => element == true);
-    selectedList.assignAll(List.generate(
+    bool allSelected = state.selectedList.every((element) => element == true);
+    state.selectedList.assignAll(List.generate(
         state.products.length, (_) => !allSelected)); // Toggle all
 
     // Update selectedIds accordingly
     if (allSelected) {
-      selectedIds.clear();
+      state.selectedIds.clear();
     } else {
       for (int i = 0; i < state.products.length; i++) {
-        if (selectedList[i]) {
-          selectedIds.add(state.products[i].id!);
+        if (state.selectedList[i]) {
+          state.selectedIds.add(state.products[i].id!);
         }
       }
     }
   }
 
   void toggleProductSelection(int index) {
-    selectedList[index] = !selectedList[index];
+    state.selectedList[index] = !state.selectedList[index];
 
-    // Update selectedIds accordingly
-    if (selectedList[index]) {
-      selectedIds.add(state.products[index].id!);
+    if (state.selectedList[index]) {
+      state.selectedIds.add(state.products[index].id!);
     } else {
-      selectedIds.remove(state.products[index].id);
+      state.selectedIds.remove(state.products[index].id);
     }
   }
 }
