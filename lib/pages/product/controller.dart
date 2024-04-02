@@ -22,12 +22,12 @@ class ProductController extends GetxController with ScrollMixin {
 
   @override
   void onClose() {
-    nameController.clear();
-    stockController.clear();
-    priceController.clear();
-    updateNameController.clear();
-    updateStockController.clear();
-    updatePriceController.clear();
+    nameController.dispose();
+    stockController.dispose();
+    priceController.dispose();
+    updateNameController.dispose();
+    updateStockController.dispose();
+    updatePriceController.dispose();
     super.onClose();
   }
 
