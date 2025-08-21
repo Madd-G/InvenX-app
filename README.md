@@ -6,7 +6,7 @@
 
 ## Description
 
-This mobile application is built using Flutter and utilizes the GetX package for state management. It interacts with a MySQL database and communicates with the backend API, preferably developed using Node.js.
+This mobile application is built using Flutter and utilizes the GetX package for state management. It interacts with a MySQL database and communicates with the backend API.
 
 ## Features
 
